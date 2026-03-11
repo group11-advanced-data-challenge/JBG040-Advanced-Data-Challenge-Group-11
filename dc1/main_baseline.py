@@ -156,14 +156,7 @@ def main(args: argparse.Namespace, activeloop: bool = True) -> None:
     print("\nConfusion Matrix (rows=true, cols=pred):\n", cm)
 
     # If your label mapping is known, replace these with the exact class names in order 0..5
-    class_names = [
-        "Pneumothorax",
-        "Nodule",
-        "Infiltration",
-        "Effusion",
-        "Atelectasis",
-        "No Finding",
-    ]
+    class_names =["Atelectasis", "Effusion", "Infiltration", "No Finding", "Nodule", "Pneumothorax"]
 
     print("\nClassification Report:\n")
     print(classification_report(y_true, y_pred, target_names=class_names, digits=4))
