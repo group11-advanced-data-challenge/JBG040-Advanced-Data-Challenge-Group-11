@@ -19,7 +19,7 @@ import plotext  # type: ignore
 from datetime import datetime
 from pathlib import Path
 from typing import List
-
+import random
 # Evaluation imports (NEW)
 import numpy as np
 from sklearn.metrics import (
@@ -30,6 +30,25 @@ from sklearn.metrics import (
     ConfusionMatrixDisplay,
 )
 
+def deterministic_mode(seed=42):
+
+    # Set seeds for reproducibility
+    # Ensuring the order of classes cannot change in the future
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
+    # Force cuDNN to use deterministic algorithms
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    # Force PyTorch operations to be deterministic
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+    torch.use_deterministic_algorithms(True)
 
 def main(args: argparse.Namespace, activeloop: bool = True) -> None:
 
@@ -243,5 +262,5 @@ if __name__ == "_main_":
         type=bool,
     )
     args = parser.parse_args()
-
+    deterministic_mode(seed=42)
     main(args)
